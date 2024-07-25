@@ -27,7 +27,7 @@ import customtkinter as ctk
 import requests
 import rich
 from colorama import Back, Fore, Style
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from PIL import Image, ImageTk
 from rich.console import Console
 from rich.text import Text
@@ -35,6 +35,7 @@ from thefuzz import fuzz, process
 from tqdm import tqdm
 
 import PTN
+import random
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
@@ -42,9 +43,45 @@ ctk.set_default_color_theme("dark-blue")
 
 app = ctk.CTk()
 
-load_dotenv()
+# load_dotenv()
 
-tmdb = os.getenv("TMDB_API_KEY", "5740bd874a57b6d0814c98d36e1124b2")
+#   select random key
+def tmdb_key():
+    keys = [
+        "516adf1e1567058f8ecbf30bf2eb9378",
+        "3fd2be6f0c70a2a598f084ddfb75487c",
+        "aa8b43b8cbce9d1689bef3d0c3087e4d",
+        "b0d65862c66030895d7983da2bd70edd",
+        "eaa6c99bdd160a89bc0a44998ead7bca",
+        "0f79586eb9d92afa2b7266f7928b055c",
+        "d3449ff6ec0c027623bf6b6f5fff78b3",
+        "94a2f36cd4e27626b6a7a07766a76196",
+        "9e59d7e445e31611f16d8971a4277825",
+        "6b4357c41d9c606e4d7ebe2f4a8850ea",
+        "6bfaa39b0a3a25275c765dcaddc7dae7",
+        "1155f6c239cb4332df695fcf245eaffd",
+        "d3449ff6ec0c027623bf6b6f5fff78b3",
+        "94a2f36cd4e27626b6a7a07766a76196",
+        "6b4357c41d9c606e4d7ebe2f4a8850ea",
+        "cfe422613b250f702980a3bbf9e90716",
+        "94a2f36cd4e27626b6a7a07766a76196",
+        "2c106eb9d82d561f7090feb22090c32d",
+        "a07e22bc18f5cb106bfe4cc1f83ad8ed",
+        "c47afb8e8b27906bca710175d6e8ba68",
+        "befc21d948862259da6f029c54831a9c",
+        "3aa350912efdcc79b7c8fddde2759632",
+        "1bb03dcadd1803cf79af629648c59d38",
+        "97058a18f3b899a2e57452cec18ee321",
+        "137ae6e9c8732b7ea556dcfb16a57a90",
+        "d5377a22f42e52f7751e9f670fdc59d8",
+        "9eecc30ae89f253bce3cec4140734493",
+        "7f8da833ce630e3dc28ae7d33c4c1e74",
+        "224e333f115738001bf7d78be3c219f4"
+    ]
+    return random.choice(keys)
+
+# tmdb = os.getenv("TMDB_API_KEY", "5740bd874a57b6d0814c98d36e1124b2")
+tmdb = tmdb_key()
 
 
 budle_dir = getattr(sys, "_MEIPASS", path.abspath(path.dirname(__file__)))
