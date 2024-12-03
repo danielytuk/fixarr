@@ -1,6 +1,6 @@
 __author__ = "sachinsenal"
 
-__version__ = "0.2.0"
+__version__ = "0.2.2"
 
 
 import datetime
@@ -27,6 +27,7 @@ import customtkinter as ctk
 import requests
 import rich
 from colorama import Back, Fore, Style
+
 # from dotenv import load_dotenv
 from PIL import Image, ImageTk
 from rich.console import Console
@@ -76,9 +77,10 @@ def tmdb_key():
         "d5377a22f42e52f7751e9f670fdc59d8",
         "9eecc30ae89f253bce3cec4140734493",
         "7f8da833ce630e3dc28ae7d33c4c1e74",
-        "224e333f115738001bf7d78be3c219f4"
+        "224e333f115738001bf7d78be3c219f4",
     ]
     return random.choice(keys)
+
 
 # tmdb = os.getenv("TMDB_API_KEY", "5740bd874a57b6d0814c98d36e1124b2")
 tmdb = tmdb_key()
@@ -657,9 +659,22 @@ def movie_renamer(file_or_folder):
         )
 
 
+# SANITIZE FILE/FOLDER NAMES
+def sanitize_path(path):
+    # Replace invalid characters with alternatives
+    invalid_chars = ["<", ">", ":", '"', "/", "\\", "|", "?", "*"]
+    for char in invalid_chars:
+        if char == ":":
+            # Special handling for colon to preserve drive letter (e.g. C:)
+            parts = path.split(":")
+            if len(parts) > 1:
+                path = parts[0] + ":" + "".join(parts[1:]).replace(":", " -")
+        else:
+            path = path.replace(char, " -")
+    return path
+
+
 # TV RENAMER
-
-
 def tv_renamer(file_or_folder):
     count = []
 
@@ -851,7 +866,7 @@ def tv_renamer(file_or_folder):
                                 episode_name,
                             )
 
-                            new_file_name = f"{t_name} - S{season['season_number']:02d}E{episode:02d} - {episode_name} ({t_date}){ext}"
+                            new_file_name = f"{t_name} - S{season['season_number']:02d}E{episode:02d} - {episode_name}{ext}"
                             rich.print(new_file_name)
 
                             tv_folder = f"{t_name} ({t_date})"
@@ -870,9 +885,11 @@ def tv_renamer(file_or_folder):
 
                             # Get the old file path
                             old_file_path = os.path.join(path, name)
+                            old_file_path_fix = sanitize_path(old_file_path)
 
                             # Create the new file path
                             new_file_path = os.path.join(season_path, new_file_name)
+                            new_file_path_fix = sanitize_path(new_file_path)
 
                             tv_progressbar.start()
 
@@ -1153,8 +1170,6 @@ def bak_u():
 
 
 # TEXT BOX
-
-
 file_folder_listbox = ctk.CTkTextbox(out, height=650, width=1500)
 file_folder_listbox.configure(
     wrap="none",
@@ -1167,7 +1182,6 @@ file_folder_listbox.configure(
     corner_radius=3.2,
 )
 file_folder_listbox.pack(fill=ctk.BOTH, expand=True)
-
 
 serc = ctk.CTkTextbox(fe, height=650, width=1500)
 serc.configure(
@@ -1182,17 +1196,14 @@ serc.configure(
 )
 serc.pack(fill=ctk.BOTH, expand=True)
 
-
 serc = ctk.CTkLabel(fe, height=0, width=0)
 serc.pack()
-
 serc.configure(
     text=f"🛠 IN PROGRESS",
     font=("Segeo UI", 18),
     state="normal",
     text_color="#d4af2a",
 )
-
 
 rem = ctk.CTkTextbox(rmf, height=650, width=1500)
 rem.configure(
@@ -1207,7 +1218,6 @@ rem.configure(
 )
 rem.pack(fill=ctk.BOTH, expand=True)
 
-
 bak_ups = ctk.CTkTextbox(done, height=650, width=1500)
 bak_ups.configure(
     wrap="none",
@@ -1221,7 +1231,6 @@ bak_ups.configure(
 )
 bak_ups.pack(fill=ctk.BOTH, expand=True)
 
-
 button_2 = ctk.CTkButton(
     tabview.tab("Movie/Renamer"),
     text="MOVIE | TMDB",
@@ -1231,10 +1240,8 @@ button_2 = ctk.CTkButton(
     command=start_processing,
 )
 
-
 button_2.pack(side="left", padx=20, pady=20, expand=True)
 button_2.grid(row=1, column=0, padx=25, pady=55, sticky="nsew")
-
 
 button_3 = ctk.CTkButton(
     tabview.tab("TV/Renamer"),
@@ -1248,7 +1255,6 @@ button_3 = ctk.CTkButton(
 button_3.pack(side="left", padx=20, pady=20, expand=True)
 button_3.grid(row=1, column=0, padx=25, pady=55, ipadx=15, sticky="nsew")
 
-
 button_4 = ctk.CTkButton(
     tabview.tab("Delete"),
     text="DELETE | FILES",
@@ -1258,10 +1264,8 @@ button_4 = ctk.CTkButton(
     command=start_del,
 )
 
-
 button_4.pack(side="left", padx=20, pady=20, expand=True)
 button_4.grid(row=1, column=0, padx=25, pady=55, sticky="nsew")
-
 
 button_1 = ctk.CTkButton(
     tabview.tab("Backup"),
@@ -1272,9 +1276,7 @@ button_1 = ctk.CTkButton(
     command=bak_u,
 )
 
-
 button_1.grid(row=1, column=0, padx=20, pady=55, sticky="nsew")
-
 
 button_5 = ctk.CTkButton(
     tabview.tab("Backup"),
@@ -1284,9 +1286,7 @@ button_5 = ctk.CTkButton(
     font=("Segoe UI", 20),
 )
 
-
 button_5.grid(row=2, column=0, padx=20, pady=55, sticky="nsew")
-
 
 button_7 = ctk.CTkButton(
     tabview.tab("Backup"),
@@ -1296,20 +1296,15 @@ button_7 = ctk.CTkButton(
     font=("Segoe UI", 20),
 )
 
-
 button_7.grid(row=3, column=0, padx=20, pady=55, sticky="nsew")
 
 
 # PROGRESS BAR
-
-
 bak_precent = ctk.CTkLabel(bu, text="0%")
 bak_precent.place(x=140, y=140)
-
 bak_progressbar = ctk.CTkProgressBar(bu, orientation="horizontal", mode="determinate")
 bak_progressbar.configure(progress_color="green")
 bak_progressbar.place(x=40, y=170)
-
 bak_progressbar.set(0)
 
 mv_precent = ctk.CTkLabel(mv, text="0%")
@@ -1318,9 +1313,7 @@ mv_precent.place(x=140, y=140)
 mov_progressbar = ctk.CTkProgressBar(mv, orientation="horizontal", mode="determinate")
 mov_progressbar.configure(progress_color="green")
 mov_progressbar.place(x=40, y=170)
-
 mov_progressbar.set(0)
-
 
 tv_precent = ctk.CTkLabel(tv, text="0%")
 tv_precent.place(x=140, y=140)
@@ -1328,18 +1321,13 @@ tv_precent.place(x=140, y=140)
 tv_progressbar = ctk.CTkProgressBar(tv, orientation="horizontal", mode="determinate")
 tv_progressbar.configure(progress_color="green")
 tv_progressbar.place(x=40, y=170)
-
 tv_progressbar.set(0)
-
 
 del_precent = ctk.CTkLabel(de, text="0%")
 del_precent.place(x=140, y=140)
-
-
 del_progressbar = ctk.CTkProgressBar(de, orientation="horizontal", mode="determinate")
 del_progressbar.configure(progress_color="green")
 del_progressbar.place(x=40, y=170)
-
 del_progressbar.set(0)
 
 
